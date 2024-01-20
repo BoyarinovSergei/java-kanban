@@ -23,8 +23,13 @@ public class Main {
         Subtask subtask2 = manager.createSubtask(new Subtask("Subtask 2", "", epic1.getId(), Statuses.NEW, 1));
         Subtask subtask3 = manager.createSubtask(new Subtask("Subtask 3", "", epic2.getId(), Statuses.NEW, 2));
 
-        epic1.setIdOfSubtasks(List.of(subtask1.getId(), subtask2.getId()));
-        epic2.setIdOfSubtasks(List.of(subtask3.getId()));
+
+        manager.updateEpic(new Epic("Epic 1", "", Statuses.NEW, 0, List.of(subtask1.getId(), subtask2.getId())), epic1.getId());
+        manager.updateEpic(new Epic("Epic 2", "", Statuses.NEW, 0, List.of(subtask3.getId())), epic2.getId());
+
+
+//        epic1.setIdOfSubtasks(List.of(subtask1.getId(), subtask2.getId()));
+//        epic2.setIdOfSubtasks(List.of(subtask3.getId()));
 
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());

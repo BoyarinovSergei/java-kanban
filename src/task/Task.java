@@ -6,21 +6,13 @@ import java.util.Objects;
 public class Task {
     protected String name;
     protected String description;
-    protected String status;
+    protected Statuses status;
     protected int id;
 
     public Task(String name, String description, Statuses status, int id) {
         this.name = name;
         this.description = description;
-        this.status = String.valueOf(status);
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+        this.status = status;
         this.id = id;
     }
 
@@ -40,12 +32,20 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Statuses getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Statuses status) {
         this.status = status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
