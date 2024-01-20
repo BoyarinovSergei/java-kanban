@@ -10,15 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TaskManager {
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Subtask> subtasks;
-    private HashMap<Integer, Epic> epics;
-    private static int id;
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
 
-    public TaskManager() {
-        this.tasks = new HashMap<>();
-        this.subtasks = new HashMap<>();
-        this.epics = new HashMap<>();
+    private int id = 0;
+
+    private int generateId() {
+        return ++id;
     }
 
     //Tasks
@@ -36,12 +35,13 @@ public class TaskManager {
     }
 
     public Task createTask(Task task) {
+        task.setId(generateId());
         tasks.put(task.getId(), task);
         return task;
     }
 
-    public void updateTask(Task taskToUpdate, int id) {
-        if (tasks.containsKey(id)) {
+    public void updateTask(Task taskToUpdate) {
+        if (tasks.containsKey(taskToUpdate.getId())) {
             tasks.put(taskToUpdate.getId(), taskToUpdate);
         } else {
             throw new RuntimeException("The key doesn't exist in the map");
@@ -61,6 +61,7 @@ public class TaskManager {
 
     public void deleteAllEpics() {
         epics.clear();
+        subtasks.clear();
     }
 
     public Epic getEpicById(int id) {
@@ -68,25 +69,34 @@ public class TaskManager {
     }
 
     public Epic createEpic(Epic epic) {
+        epic.setId(generateId());
         epics.put(epic.getId(), epic);
         return epic;
     }
 
-    public void updateEpic(Epic epic, Integer id) {
-        if (epics.containsKey(id)) {
-            epics.put(id, epic);
+    public void updateEpic(Epic epic) {
+        if (epics.containsKey(epic.getId())) {
+            epics.put(epic.getId(), epic);
         } else {
             throw new RuntimeException("The key doesn't exist in the map");
         }
+
+        //рассчитать статус
     }
 
     public void deleteEpic(Integer id) {
-        epics.get(id).getIdOfSubtasks().forEach(s -> subtasks.remove(s));
-        epics.remove(id);
+        if (epics.containsKey(id)) {
+            epics.get(id).getIdOfSubtasks().forEach(s -> subtasks.remove(s));
+            epics.remove(id);
+        }
     }
 
-    public List<Integer> getAllSubtasksByEpic(Epic epic) {
-        return epic.getIdOfSubtasks();
+    public List<Subtask> getAllSubtasksByEpic(Epic epic) {
+        List<Subtask> list = new ArrayList<>();
+
+        epic.getIdOfSubtasks().forEach(s -> list.add(subtasks.get(s)));
+
+        return list;
     }
 
     //Subtasks
@@ -97,6 +107,7 @@ public class TaskManager {
 
     public void deleteAllSubtask() {
         subtasks.clear();
+        epics.values().forEach(e -> e.setStatus(Statuses.NEW));
     }
 
     public Subtask getSubtaskById(int id) {
@@ -104,32 +115,41 @@ public class TaskManager {
     }
 
     public Subtask createSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        return subtask;
+        if (epics.containsKey(subtask.getEpicId())) {
+            subtask.setId(generateId());
+            subtasks.put(subtask.getId(), subtask);
+            calculateEpicStatus(epics.get(subtask.getEpicId()));
+            return subtask;
+        } else {
+            throw new RuntimeException("The epic that the incoming subtask contains doesn't exist.");
+        }
     }
 
     public void updateSubtask(Subtask subtaskToUpdate, int id) {
-        if (subtasks.containsKey(id)) {
-            subtasks.put(subtaskToUpdate.getId(), subtaskToUpdate);
+        if (epics.containsKey(subtaskToUpdate.getEpicId())) {
+            if (subtasks.containsKey(id)) {
+                subtasks.put(subtaskToUpdate.getId(), subtaskToUpdate);
+                calculateEpicStatus(epics.get(subtaskToUpdate.getEpicId()));
+            } else {
+                throw new RuntimeException("The key doesn't exist in the map");
+            }
         } else {
-            throw new RuntimeException("The key doesn't exist in the map");
+            throw new RuntimeException("The epic id in the incoming subtask doesn't exist.");
         }
-
-        calculateEpicStatus(subtaskToUpdate);
     }
 
 
-    public void calculateEpicStatus(Subtask subtask) {
-        if (subtasks.containsKey(subtask.getId())) {
+    private void calculateEpicStatus(Epic epic) {
+        if (epics.containsKey(epic.getId())) {
 
-            if (epics.get(subtask.getEpicId()).getIdOfSubtasks().isEmpty()) {
-                epics.get(subtask.getEpicId()).setStatus(String.valueOf(Statuses.NEW));
-            } else if (epics.get(subtask.getEpicId()).getIdOfSubtasks().stream().allMatch(s -> subtasks.get(s).getStatus().equals(String.valueOf(Statuses.NEW)))) {
-                epics.get(subtask.getEpicId()).setStatus(String.valueOf(Statuses.NEW));
-            } else if (epics.get(subtask.getEpicId()).getIdOfSubtasks().stream().allMatch(s -> subtasks.get(s).getStatus().equals(String.valueOf(Statuses.DONE)))) {
-                epics.get(subtask.getEpicId()).setStatus(String.valueOf(Statuses.DONE));
+            if (epic.getIdOfSubtasks().isEmpty()) {
+                epic.setStatus(Statuses.NEW);
+            } else if (epic.getIdOfSubtasks().stream().allMatch(s -> subtasks.get(s).getStatus().equals(Statuses.NEW))) {
+                epic.setStatus(Statuses.NEW);
+            } else if (epic.getIdOfSubtasks().stream().allMatch(s -> subtasks.get(s).getStatus().equals(Statuses.DONE))) {
+                epic.setStatus(Statuses.DONE);
             } else {
-                epics.get(subtask.getEpicId()).setStatus(String.valueOf(Statuses.IN_PROGRESS));
+                epic.setStatus(Statuses.IN_PROGRESS);
             }
 
         } else {
@@ -137,8 +157,9 @@ public class TaskManager {
         }
     }
 
-
     public void deleteSubtask(Integer id) {
+        Epic epic = epics.get(subtasks.get(id).getEpicId());
         subtasks.remove(id);
+        calculateEpicStatus(epic);
     }
 }

@@ -1,6 +1,7 @@
 package task;
 
 import level.Statuses;
+
 import java.util.Objects;
 
 public class Task {
@@ -8,6 +9,12 @@ public class Task {
     protected String description;
     protected Statuses status;
     protected int id;
+
+    public Task(String name, String description, Statuses status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
 
     public Task(String name, String description, Statuses status, int id) {
         this.name = name;
