@@ -4,8 +4,6 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
-import java.util.List;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -22,10 +20,6 @@ public class Main {
         Subtask subtask1 = manager.createSubtask(new Subtask("Subtask 1", "", epic1.getId(), Statuses.NEW));
         Subtask subtask2 = manager.createSubtask(new Subtask("Subtask 2", "", epic1.getId(), Statuses.NEW));
         Subtask subtask3 = manager.createSubtask(new Subtask("Subtask 3", "", epic2.getId(), Statuses.NEW));
-
-
-        manager.updateEpic(new Epic("Epic 1", "", Statuses.NEW, epic1.getId(), List.of(subtask1.getId(), subtask2.getId())));
-        manager.updateEpic(new Epic("Epic 2", "", Statuses.NEW, epic2.getId(), List.of(subtask3.getId())));
 
 
         System.out.println(manager.getAllTasks());
