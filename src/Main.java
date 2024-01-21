@@ -35,9 +35,9 @@ public class Main {
 
         manager.updateTask(new Task("Task 1", "", Statuses.DONE, task1.getId()));
         manager.updateTask(new Task("Task 2", "", Statuses.DONE, task2.getId()));
-        manager.updateSubtask(new Subtask("Subtask 1", "", epic1.getId(), Statuses.DONE, subtask1.getId()), subtask1.getId());
-        manager.updateSubtask(new Subtask("Subtask 2", "", epic1.getId(), Statuses.DONE, subtask2.getId()), subtask2.getId());
-        manager.updateSubtask(new Subtask("Subtask 3", "", epic2.getId(), Statuses.DONE, subtask3.getId()), subtask3.getId());
+        manager.updateSubtask(new Subtask("Subtask 1", "", epic1.getId(), Statuses.DONE, subtask1.getId()));
+        manager.updateSubtask(new Subtask("Subtask 2", "", epic1.getId(), Statuses.DONE, subtask2.getId()));
+        manager.updateSubtask(new Subtask("Subtask 3", "", epic2.getId(), Statuses.DONE, subtask3.getId()));
 
         System.out.println();
         System.out.println(manager.getAllTasks());
