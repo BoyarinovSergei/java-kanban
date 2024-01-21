@@ -52,7 +52,6 @@ public class TaskManager {
         tasks.remove(id);
     }
 
-
     //Epics
 
     public List<Epic> getAllEpics() {
@@ -102,8 +101,6 @@ public class TaskManager {
         } else {
             throw new RuntimeException("The key doesn't exist in the map");
         }
-
-
     }
 
     //Subtasks
