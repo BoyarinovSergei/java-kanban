@@ -1,4 +1,5 @@
 import level.Statuses;
+import service.InMemoryTaskManager;
 import service.TaskManager;
 import task.Epic;
 import task.Subtask;
@@ -8,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager manager = new TaskManager();
+        TaskManager manager = new InMemoryTaskManager();
 
         Task task1 = manager.createTask(new Task("Task 1", "", Statuses.NEW));
         Task task2 = manager.createTask(new Task("Task 2", "", Statuses.NEW));
