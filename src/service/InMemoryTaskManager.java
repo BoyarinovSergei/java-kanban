@@ -9,13 +9,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static util.Managers.getDefaultHistory;
+
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
 
+    private final HistoryManager historyManager = getDefaultHistory();
+
     private int id = 0;
-    private final List<Task> tenElementsOfMemory = new ArrayList<>();
 
     private int generateId() {
         return ++id;
@@ -35,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        memorizeNewAction(tasks.get(id));
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
@@ -75,7 +78,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        memorizeNewAction(epics.get(id));
+        historyManager.add(epics.get(id));
         return epics.get(id);
     }
 
@@ -134,7 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        memorizeNewAction(subtasks.get(id));
+        historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
@@ -188,20 +191,6 @@ public class InMemoryTaskManager implements TaskManager {
             calculateEpicStatus(epic);
         } else {
             throw new RuntimeException("The key doesn't exist in the map");
-        }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return tenElementsOfMemory;
-    }
-
-    private void memorizeNewAction(Task task) {
-        if (tenElementsOfMemory.size() == 10) {
-            tenElementsOfMemory.remove(0);
-            tenElementsOfMemory.add(task);
-        } else {
-            tenElementsOfMemory.add(task);
         }
     }
 }
