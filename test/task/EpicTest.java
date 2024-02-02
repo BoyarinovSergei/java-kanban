@@ -52,13 +52,19 @@ class EpicTest {
         assertEquals(1, epic1.getIdOfSubtasks().get(0));
     }
 
-    @Test
+    @Test()
     @DisplayName("проверьте, что объект Subtask нельзя сделать своим же эпиком;")
     public void impossibleToAddSubtaskInFormOfItsEpic() {
         Epic epic1 = manager.createEpic(new Epic("Epic 1", "", Statuses.NEW));
         Subtask subtask1 = manager.createSubtask(new Subtask("Subtask 1", "", epic1.getId(), Statuses.NEW));
 
-        // Не понял как это проверить от слова совсем
+        RuntimeException thrown = assertThrows(
+                RuntimeException.class,
+                () -> manager.updateEpic(new Epic("Epic 1", "", Statuses.NEW, subtask1.getId())),
+                "Expected updateEpic to throw, but it didn't"
+        );
+
+        assertEquals("The key doesn't exist in the map", thrown.getMessage());
     }
 
     @Test
