@@ -44,4 +44,6 @@ public interface TaskManager {
     void updateSubtask(Subtask subtaskToUpdate);
 
     void deleteSubtask(Integer id);
+
+    List<Task> getHistory();
 }
